@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TGLTN Map</title>
+  <link rel="stylesheet" href="map.css">
+  <script src="https://cdn.jsdelivr.net/npm/sql.js@1.10.2/dist/sql-wasm.js"></script>
+</head>
+<body>
+  <nav class="top-nav">
+    <a class="top-nav-link" href="index.html">Scoreboard</a>
+    <button type="button" id="nav-map-btn" class="top-nav-link active">Map</button>
+    <button type="button" id="nav-browse-btn" class="top-nav-link">Browse data</button>
+  </nav>
+
+  <div id="map-view" class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <h1>TGLTN Map</h1>
+      </div>
+
+      <section class="panel stats">
+        <p id="build-info" class="muted stats-caption">Loading data…</p>
+        <div class="stats-grid">
+          <div class="stat">
+            <span class="stat-label">Visible</span>
+            <strong id="visible-count">0</strong>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Kills</span>
+            <strong id="kill-count">0</strong>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Groggies</span>
+            <strong id="groggy-count">0</strong>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Deaths</span>
+            <strong id="death-count">0</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel controls">
+        <label>
+          <span>Map</span>
+          <select id="map-select"></select>
+        </label>
+        <label>
+          <span>Mode</span>
+          <select id="mode-select">
+            <option value="all">All modes</option>
+          </select>
+        </label>
+        <label>
+          <span>Events</span>
+          <select id="type-select">
+            <option value="all">All events</option>
+            <option value="kill">Kills</option>
+            <option value="groggy">Groggies</option>
+            <option value="death">Deaths</option>
+          </select>
+        </label>
+        <label>
+          <span>YouTube</span>
+          <select id="youtube-select">
+            <option value="all">All events</option>
+            <option value="with" selected>With YouTube link</option>
+            <option value="without">Without YouTube link</option>
+          </select>
+        </label>
+        <label>
+          <span>Search</span>
+          <input id="search-input" type="search" placeholder="Name, weapon, match id">
+        </label>
+        <label>
+          <span>Weapon / cause</span>
+          <input id="weapon-input" type="search" placeholder="damageCauserName">
+        </label>
+        <div class="control-group">
+          <span>Date range</span>
+          <div class="date-range-row">
+            <span class="date-range-tag">From</span>
+            <input id="date-from-slider" type="range" aria-label="From date/time">
+          </div>
+          <div class="date-range-readout" id="date-from-label"></div>
+          <div class="date-range-row">
+            <span class="date-range-tag">To</span>
+            <input id="date-to-slider" type="range" aria-label="To date/time">
+          </div>
+          <div class="date-range-readout" id="date-to-label"></div>
+        </div>
+        <label>
+          <span>Point size</span>
+          <input id="size-input" type="range" min="1" max="12" step="1" value="3">
+        </label>
+      </section>
+
+      <section class="panel details">
+        <div class="panel-head">
+          <h2>Selection</h2>
+        </div>
+        <div id="selection-details" class="detail-body muted">Click a point to inspect an event. Ctrl+click to see everything at a point.</div>
+      </section>
+    </aside>
+
+    <main class="workspace">
+      <section class="map-stage">
+        <div class="map-head">
+          <div>
+            <div id="map-title" class="map-title">Loading map…</div>
+            <div id="map-subtitle" class="muted">Preparing event layer</div>
+          </div>
+          <div class="legend">
+            <span><i class="swatch kill"></i>Kill</span>
+            <span><i class="swatch groggy"></i>Groggy</span>
+            <span><i class="swatch death"></i>Death</span>
+          </div>
+        </div>
+        <div id="canvas-wrap" class="canvas-wrap">
+          <canvas id="map-canvas" width="1400" height="900"></canvas>
+          <div id="hover-card" class="hover-card hidden"></div>
+          <div id="event-stack" class="event-stack hidden"></div>
+          <div id="loading-overlay" class="loading-overlay">
+            <div class="loading-spinner"></div>
+            <div id="loading-text" class="loading-text">Loading telemetry…</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <section id="browse-view" class="browse-view hidden">
+    <div id="data-tabs-container" class="tabs"></div>
+    <div id="data-info-container"></div>
+    <div id="data-content-container"></div>
+  </section>
+
+  <div id="youtube-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <a id="youtube-watch-link" class="youtube-watch-link hidden" href="#" target="_blank" rel="noopener noreferrer">Watch on YouTube</a>
+        <button class="close-modal" type="button" aria-label="Close video">&times;</button>
+      </div>
+      <div id="youtube-container" class="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="map.js"></script>
+  <script src="data-browser.js"></script>
+</body>
+</html>
